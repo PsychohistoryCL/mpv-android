@@ -164,6 +164,9 @@ fi
 
 echo "[trace] libplacebo start" >&2
 # libplacebo (FongMi fork with Vulkan YCbCr AHardwareBuffer wrapping)
+if [ -d libplacebo ] && ! git -C libplacebo remote get-url origin 2>/dev/null | grep -q "FongMi/libplacebo"; then
+	rm -rf libplacebo mpv/_build*
+fi
 if [ ! -d libplacebo ]; then
 	gclone libplacebo --recursive https://github.com/FongMi/libplacebo
 	cd libplacebo
