@@ -68,16 +68,17 @@ elif [ "$1" = "install" ]; then
 	$WGET -q --show-progress "https://github.com/FongMi/mpv/archive/refs/heads/fongmi.tar.gz" -O mpv-pin.tgz
 	tar -xzf mpv-pin.tgz -C deps/mpv --strip-components=1
 	rm mpv-pin.tgz
-	find deps/mpv/video -name '*.c' -exec sed -i 's/av_mediacodec_release_buffer_status/av_mediacodec_release_buffer/g' {} +
 
 	msg "Trying to fetch existing prefix"
 	mkdir -p prefix
 	if fetch_prefix; then
-		msg "Overlaying FongMi/libplacebo (fongmi) onto cached prefix"
-		rm -rf deps/libplacebo
+		msg "Overlaying FongMi/FFmpeg (release-9.0-fongmi) + FongMi/libplacebo (fongmi) onto cached prefix"
+		rm -rf deps/ffmpeg deps/libplacebo
 		mkdir -p deps/shaderc
+		git clone --depth 1 --branch release-9.0-fongmi https://github.com/FongMi/FFmpeg deps/ffmpeg
 		git clone --depth 1 --recursive --branch fongmi https://github.com/FongMi/libplacebo deps/libplacebo
 		for arch in $v_ci_archs; do
+			./buildall.sh --no-deps --arch "$arch" ffmpeg
 			./buildall.sh --no-deps --arch "$arch" libplacebo
 		done
 	else
