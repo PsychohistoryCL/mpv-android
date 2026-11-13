@@ -29,6 +29,15 @@ jobs:
           sudo apt-get install autoconf pkgconf libtool ninja-build python3-pip gperf nasm
           sudo pip3 install meson
 
+      - name: Debug git clone in runner
+        run: |
+          set -x
+          git config --global --list || true
+          mkdir -p /tmp/ct && cd /tmp/ct
+          git clone https://github.com/libass/libass 2>&1 | tail -20
+          echo "CLONE_RC=$?"
+          ls -d libass && git -C libass log --oneline -1
+
       - name: Download or build deps
         run: |
           mkdir -p "$CACHE_FOLDER"
