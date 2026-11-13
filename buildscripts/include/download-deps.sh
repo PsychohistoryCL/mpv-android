@@ -5,11 +5,24 @@
 [ -z "$IN_CI" ] && IN_CI=0
 [ -z "$WGET" ] && WGET=wget
 
+# git clone with retries (CI runners occasionally fail mid-clone with exit 4)
+gclone() {
+	local dst="$1"; shift
+	local i
+	for i in 1 2 3 4 5; do
+		git clone "$@" && return 0
+		echo "git clone '$dst' failed (attempt $i), retrying..." >&2
+		rm -rf "$dst"
+		sleep $((i * 5))
+	done
+	return 1
+}
+
 mkdir -p deps && cd deps
 
 # openssl
 if [ ! -d openssl ]; then
-	git clone --recurse-submodules https://github.com/openssl/openssl.git openssl -b openssl-$v_openssl
+	gclone openssl --recurse-submodules https://github.com/openssl/openssl.git -b openssl-$v_openssl
 else
 	cd openssl
 	echo "Updating openssl"
@@ -22,19 +35,19 @@ fi
 
 # dav1d
 if [ ! -d dav1d ]; then
-	git clone https://github.com/videolan/dav1d
+	gclone dav1d https://github.com/videolan/dav1d
 fi
 
 # ffmpeg
 if [ ! -d ffmpeg ]; then
 	args=()
 	[ $IN_CI -eq 1 ] && args+=(--depth=1 -b "$v_ci_ffmpeg")
-	git clone https://github.com/FFmpeg/FFmpeg ffmpeg "${args[@]}"
+	gclone ffmpeg https://github.com/FFmpeg/FFmpeg "${args[@]}"
 fi
 
 # freetype2
 if [ ! -d freetype2 ]; then
-	git clone --recurse-submodules https://gitlab.freedesktop.org/freetype/freetype.git freetype2 -b VER-${v_freetype//./-}
+	gclone freetype2 --recurse-submodules https://gitlab.freedesktop.org/freetype/freetype.git -b VER-${v_freetype//./-}
 else
 	cd freetype2
 	echo "Updating freetype2"
@@ -97,7 +110,7 @@ fi
 
 # libass
 if [ ! -d libass ]; then
-	git clone https://github.com/libass/libass
+	gclone libass https://github.com/libass/libass
 fi
 
 # lua
@@ -119,7 +132,7 @@ HEREDOC
 
 # google-shaderc
 if [ ! -d google-shaderc ]; then
-	git clone --recursive https://github.com/google/shaderc google-shaderc
+	gclone google-shaderc --recursive https://github.com/google/shaderc
 	cd google-shaderc/utils
 	./git-sync-deps
 	cd ../..
@@ -127,7 +140,7 @@ fi
 
 # libplacebo
 if [ ! -d libplacebo ]; then
-	git clone --recursive https://github.com/haasn/libplacebo
+	gclone libplacebo --recursive https://github.com/haasn/libplacebo
 	cd libplacebo
 	git checkout -f "$v_libplacebo"
 	git submodule update --init --recursive
@@ -146,7 +159,7 @@ fi
 
 # mpv
 if [ ! -d mpv ]; then
-	git clone https://github.com/mpv-player/mpv
+	gclone mpv https://github.com/mpv-player/mpv
 	cd mpv
 	git checkout -f "$v_mpv"
 	cd ..
