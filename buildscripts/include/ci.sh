@@ -62,11 +62,13 @@ elif [ "$1" = "install" ]; then
 	msg "Fetching SDK + NDK"
 	IN_CI=1 ./include/download-sdk.sh
 
-	msg "Fetching mpv"
+	msg "Fetching mpv ($v_mpv)"
 	mkdir -p deps/mpv
-	$WGET -q --show-progress https://github.com/mpv-player/mpv/archive/master.tar.gz -O master.tgz
-	tar -xzf master.tgz -C deps/mpv --strip-components=1
-	rm master.tgz
+	if [ ! -f deps/mpv/Cargo.toml ] && [ ! -f deps/mpv/meson.build ]; then
+		$WGET -q --show-progress "https://github.com/mpv-player/mpv/archive/${v_mpv}.tar.gz" -O mpv-pin.tgz
+		tar -xzf mpv-pin.tgz -C deps/mpv --strip-components=1
+		rm mpv-pin.tgz
+	fi
 
 	msg "Trying to fetch existing prefix"
 	mkdir -p prefix

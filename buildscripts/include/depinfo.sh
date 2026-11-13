@@ -44,6 +44,9 @@ dep_mpv_android=(mpv)
 
 # pinned ffmpeg revision
 v_ci_ffmpeg=n9.0.2
+# pinned for Vulkan 1.1 devices: mpv v0.41 is the last release using libplacebo 6.x
+v_mpv=v0.41.0
+v_libplacebo=v6.338.2
 
 # filename used to uniquely identify a build prefix
-ci_tarball="prefix-n${v_ndk}-l${v_lua}-u${v_unibreak}-h${v_harfbuzz}-fr${v_fribidi}-ft${v_freetype}-x${v_libxml2}-fo${v_fontconfig}-o${v_openssl}-c${v_curl}-ff${v_ci_ffmpeg}.tgz"
+ci_tarball="prefix-n${v_ndk}-l${v_lua}-u${v_unibreak}-h${v_harfbuzz}-fr${v_fribidi}-ft${v_freetype}-x${v_libxml2}-fo${v_fontconfig}-o${v_openssl}-c${v_curl}-ff${v_ci_ffmpeg}-pl${v_libplacebo}-mv${v_mpv}.tgz"

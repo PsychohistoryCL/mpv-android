@@ -128,6 +128,10 @@ fi
 # libplacebo
 if [ ! -d libplacebo ]; then
 	git clone --recursive https://github.com/haasn/libplacebo
+	cd libplacebo
+	git checkout -f "$v_libplacebo"
+	git submodule update --init --recursive
+	cd ..
 fi
 
 # curl
@@ -143,5 +147,8 @@ fi
 # mpv
 if [ ! -d mpv ]; then
 	git clone https://github.com/mpv-player/mpv
+	cd mpv
+	git checkout -f "$v_mpv"
+	cd ..
 fi
 
