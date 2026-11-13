@@ -108,11 +108,13 @@ if [ ! -d fontconfig ]; then
 	tar -xz -C fontconfig --strip-components=1 -f fontconfig-${v_fontconfig}.tar.gz
 fi
 
+echo "[trace] libass start" >&2
 # libass
 if [ ! -d libass ]; then
 	gclone libass https://github.com/libass/libass
 fi
 
+echo "[trace] lua start" >&2
 # lua
 if [ ! -d lua ]; then
 	mkdir lua
@@ -123,6 +125,7 @@ if [ ! -d lua ]; then
 	tar -xz -C lua --strip-components=1 -f lua-$v_lua.tar.gz
 fi
 
+echo "[trace] shaderc start" >&2
 # shaderc
 mkdir -p shaderc
 cat >shaderc/README <<'HEREDOC'
@@ -130,6 +133,7 @@ shaderc sources are provided by the NDK
 see <ndk>/sources/third_party/shaderc
 HEREDOC
 
+echo "[trace] libplacebo start" >&2
 # libplacebo
 if [ ! -d libplacebo ]; then
 	gclone libplacebo --recursive https://github.com/haasn/libplacebo
@@ -139,6 +143,7 @@ if [ ! -d libplacebo ]; then
 	cd ..
 fi
 
+echo "[trace] curl start" >&2
 # curl
 if [ ! -d curl ]; then
 	mkdir curl
@@ -149,6 +154,7 @@ if [ ! -d curl ]; then
 	tar -xz -C curl --strip-components=1 -f curl-$v_curl.tar.gz
 fi
 
+echo "[trace] mpv start" >&2
 # mpv
 if [ ! -d mpv ]; then
 	gclone mpv https://github.com/mpv-player/mpv
@@ -156,4 +162,4 @@ if [ ! -d mpv ]; then
 	git checkout -f "$v_mpv"
 	cd ..
 fi
-
+echo "[trace] done" >&2
