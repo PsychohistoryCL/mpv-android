@@ -95,7 +95,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
         }
 
         MPVLib.setOptionString("gpu-context", "android")
-        MPVLib.setOptionString("opengl-es", "yes")
+        // FORCED BY PsychohistoryCL: use Vulkan instead of OpenGL ES
+        MPVLib.setOptionString("gpu-api", "vulkan")
+        MPVLib.setOptionString("opengl-es", "no")
         MPVLib.setOptionString("hwdec", hwdec)
         MPVLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,mpeg2video,vp8,vp9,av1")
         MPVLib.setOptionString("ao", "audiotrack,opensles")
