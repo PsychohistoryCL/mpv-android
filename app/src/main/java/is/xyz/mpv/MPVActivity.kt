@@ -1299,7 +1299,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             Pair("HW (mediacodec-copy)", "mediacodec-copy"),
             Pair("SW", "no")
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || player.forceHardwarePlus())
+        if ((!player.useVulkan() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) || player.forceHardwarePlus())
             items.add(0, Pair("HW+ (mediacodec)", "mediacodec"))
         val hwdecActive = player.hwdecActive
         val selectedIndex = items.indexOfFirst { it.second == hwdecActive }

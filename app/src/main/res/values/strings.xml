@@ -197,6 +197,9 @@
     <string name="pref_gpu_next_title">Use gpu-next</string>
     <string name="pref_gpu_next_summary">Use new video rendering backend, based on libplacebo.</string>
 
+    <string name="pref_gpu_vulkan_title">Use Vulkan</string>
+    <string name="pref_gpu_vulkan_summary">Use the Android Vulkan GPU context (recommended with gpu-next).</string>
+
     <string name="pref_version_info">Version information</string>
 
     <string name="pref_edit_mpv_conf">Edit mpv.conf</string>

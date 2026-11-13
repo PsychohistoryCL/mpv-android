@@ -8,6 +8,13 @@
         android:summary="@string/pref_gpu_next_summary"
         android:title="@string/pref_gpu_next_title" />
 
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        app:iconSpaceReserved="false"
+        android:key="gpu_vulkan"
+        android:summary="@string/pref_gpu_vulkan_summary"
+        android:title="@string/pref_gpu_vulkan_title" />
+
     <is.xyz.mpv.preferences.ConfigEditDialogPreference
         app:iconSpaceReserved="false"
         app:filename="mpv.conf"

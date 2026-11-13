@@ -19,18 +19,16 @@ mkdir -p "$prefix_dir"/lib/pkgconfig
 cat >"$prefix_dir"/lib/pkgconfig/vulkan.pc <<"END"
 Name: Vulkan
 Description:
-Version: 1.3.275
+Version: 1.4.335
 Libs: -lvulkan
 Cflags:
 END
 
 unset CC CXX # meson wants these unset
 
-# NOTE: `libcurl` is not a meson option in v0.41 (curl is autodetected);
-# passing it aborts the configure step.
 meson setup $build --cross-file "$prefix_dir"/crossfile.txt \
 	--default-library shared \
-	-Diconv=disabled -D{lua,vulkan}=enabled \
+	-Diconv=disabled -D{lua,libcurl,lcms2,vulkan}=enabled \
 	-Dlibmpv=true -Dcplayer=false \
 	-Dmanpage-build=disabled
 

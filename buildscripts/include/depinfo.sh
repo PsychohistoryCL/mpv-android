@@ -19,6 +19,8 @@ v_openssl=3.5.9
 v_libxml2=2.15.4
 v_fontconfig=2.18.3
 v_curl=8.23.0
+v_lcms2=2.20
+v_lcms2_sha256=18ff5504fa9cc8a2b1f3591180d90ead16c8a2ea78e530523b46eab70e1ca6b9
 
 
 ## Dependency tree
@@ -35,9 +37,10 @@ dep_unibreak=()
 dep_libass=(freetype2 fontconfig fribidi harfbuzz unibreak)
 dep_lua=()
 dep_shaderc=()
-dep_libplacebo=(shaderc)
+dep_lcms2=()
+dep_libplacebo=(shaderc lcms2)
 dep_curl=(openssl)
-dep_mpv=(ffmpeg libass lua libplacebo curl)
+dep_mpv=(ffmpeg libass lua libplacebo lcms2 curl)
 dep_mpv_android=(mpv)
 
 
@@ -45,9 +48,8 @@ dep_mpv_android=(mpv)
 
 # pinned ffmpeg revision
 v_ci_ffmpeg=n9.0.2
-# pinned for Vulkan 1.1 devices: mpv v0.41 is the last release using libplacebo 6.x
-v_mpv=v0.41.0
-v_libplacebo=v6.338.2
+v_mpv=v0.42.0
+v_libplacebo=v7.387.0
 
 # filename used to uniquely identify a build prefix
-ci_tarball="prefix-n${v_ndk}-l${v_lua}-u${v_unibreak}-h${v_harfbuzz}-fr${v_fribidi}-ft${v_freetype}-x${v_libxml2}-fo${v_fontconfig}-o${v_openssl}-c${v_curl}-ff${v_ci_ffmpeg}-pl${v_libplacebo}-mv${v_mpv}.tgz"
+ci_tarball="prefix-n${v_ndk}-l${v_lua}-u${v_unibreak}-h${v_harfbuzz}-fr${v_fribidi}-ft${v_freetype}-x${v_libxml2}-fo${v_fontconfig}-o${v_openssl}-c${v_curl}-lc${v_lcms2}-ff${v_ci_ffmpeg}-pl${v_libplacebo}-mv${v_mpv}.tgz"

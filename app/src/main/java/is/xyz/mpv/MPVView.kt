@@ -35,7 +35,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
         val hwdec = if (forceHardwarePlus())
             "mediacodec"
         else if (sharedPreferences.getBoolean("hardware_decoding", true))
-            HWDECS
+            if (useVulkan()) "mediacodec-copy" else HWDECS
         else
             "no"
 
@@ -94,8 +94,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
             MPVLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
         }
 
-        MPVLib.setOptionString("gpu-context", "android")
-        MPVLib.setOptionString("opengl-es", "yes")
+        if (useVulkan()) {
+            MPVLib.setOptionString("gpu-api", "vulkan")
+            MPVLib.setOptionString("gpu-context", "androidvk")
+        } else {
+            MPVLib.setOptionString("gpu-context", "android")
+            MPVLib.setOptionString("opengl-es", "yes")
+        }
         MPVLib.setOptionString("hwdec", hwdec)
         MPVLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,mpeg2video,vp8,vp9,av1")
         MPVLib.setOptionString("ao", "audiotrack,opensles")
@@ -357,9 +362,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
     fun cycleAudio() = MPVLib.command(arrayOf("cycle", "audio"))
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
     fun cycleHwdec() {
-        if (!forceHardwarePlus())
-            MPVLib.command(arrayOf("cycle-values", "hwdec", HWDECS, "no"))
-        else {
+        if (!forceHardwarePlus()) {
+            val hwdecValues = if (useVulkan()) "mediacodec-copy" else HWDECS
+            MPVLib.command(arrayOf("cycle-values", "hwdec", hwdecValues, "no"))
+        } else {
             MPVLib.command(arrayOf("cycle-values", "hwdec", "mediacodec", "mediacodec-copy"))
             if (enableGpuNext())
                 MPVLib.command(arrayOf("cycle-values", "vo", "mediacodec_embed", "gpu-next"))
@@ -404,6 +410,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
 
     fun enableGpuNext(): Boolean {
         return sharedPreferences.getBoolean("gpu_next", false)
+    }
+
+    fun useVulkan(): Boolean {
+        return sharedPreferences.getBoolean("gpu_vulkan", false)
     }
 
     fun changeShuffle(cycle: Boolean, value: Boolean = true) {

@@ -147,6 +147,9 @@
 
     <string name="pref_gpu_debug_title">Activar depuración OpenGL</string>
 
+    <string name="pref_gpu_vulkan_title">Usar Vulkan</string>
+    <string name="pref_gpu_vulkan_summary">Usar el contexto GPU Vulkan de Android (recomendado junto a gpu-next).</string>
+
     <string name="pref_version_info">Información de versión</string>
 
     <string name="pref_edit_mpv_conf">Editar mpv.conf</string>
