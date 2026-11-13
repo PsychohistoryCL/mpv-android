@@ -73,7 +73,8 @@ LOCAL_CPPFLAGS += -std=c++17
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/adrenotools/include \
     $(LOCAL_PATH)/adrenotools \
-    $(LOCAL_PATH)/adrenotools/lib/linkernsbypass
+    $(LOCAL_PATH)/adrenotools/lib/linkernsbypass \
+    $(LOCAL_PATH)/adrenotools
 LOCAL_SRC_FILES := \
     adrenotools/src/driver.cpp \
     adrenotools/src/bcenabler.cpp \
