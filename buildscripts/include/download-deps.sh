@@ -119,7 +119,8 @@ echo "[trace] lua start" >&2
 if [ ! -d lua ]; then
 	mkdir lua
 	if [ ! -f lua-$v_lua.tar.gz ]; then
-		$WGET -q --show-progress https://www.lua.org/ftp/lua-$v_lua.tar.gz
+		# lua.org/ftp rejects modern TLS clients; use the GitHub mirror instead
+		$WGET -q --show-progress "https://codeload.github.com/lua/lua/tar.gz/refs/tags/v$v_lua" -O lua-$v_lua.tar.gz
 	fi
 	echo "Extracting lua-$v_lua.tar.gz"
 	tar -xz -C lua --strip-components=1 -f lua-$v_lua.tar.gz

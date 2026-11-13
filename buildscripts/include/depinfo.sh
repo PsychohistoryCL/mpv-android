@@ -9,7 +9,7 @@ v_ndk_n=30.0.16248370
 v_sdk_platform=36
 v_sdk_build_tools=36.0.0
 
-v_lua=5.2.4
+v_lua=5.2.2
 v_unibreak=8.0
 v_harfbuzz=15.0.0
 v_fribidi=1.0.17
