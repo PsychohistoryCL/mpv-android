@@ -155,7 +155,7 @@ echo "[trace] lcms2 start" >&2
 if [ ! -d lcms2 ]; then
 	mkdir lcms2
 	if [ ! -f lcms2-$v_lcms2.tar.gz ]; then
-		$WGET -q --show-progress "https://github.com/mm2/Little-CMS/releases/download/lcms2.${v_lcms2}/lcms2-${v_lcms2}.tar.gz"
+		$WGET -q --show-progress "https://github.com/mm2/Little-CMS/releases/download/lcms${v_lcms2}/lcms2-${v_lcms2}.tar.gz"
 	fi
 	echo "$v_lcms2_sha256  lcms2-$v_lcms2.tar.gz" | sha256sum -c - >&2
 	echo "Extracting lcms2-$v_lcms2.tar.gz"
