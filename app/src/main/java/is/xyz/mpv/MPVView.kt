@@ -35,7 +35,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
         val hwdec = if (forceHardwarePlus())
             "mediacodec"
         else if (sharedPreferences.getBoolean("hardware_decoding", true))
-            if (useVulkan()) "mediacodec-copy" else HWDECS
+            HWDECS
         else
             "no"
 
@@ -363,8 +363,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
     fun cycleHwdec() {
         if (!forceHardwarePlus()) {
-            val hwdecValues = if (useVulkan()) "mediacodec-copy" else HWDECS
-            MPVLib.command(arrayOf("cycle-values", "hwdec", hwdecValues, "no"))
+            MPVLib.command(arrayOf("cycle-values", "hwdec", HWDECS, "no"))
         } else {
             MPVLib.command(arrayOf("cycle-values", "hwdec", "mediacodec", "mediacodec-copy"))
             if (enableGpuNext())

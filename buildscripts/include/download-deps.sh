@@ -184,11 +184,11 @@ if [ ! -d curl ]; then
 fi
 
 echo "[trace] mpv start" >&2
-# mpv
+# mpv (FongMi fork with synchronized Android Vulkan aimagereader zero-copy)
 if [ ! -d mpv ]; then
-	gclone mpv https://github.com/mpv-player/mpv
+	gclone mpv https://github.com/FongMi/mpv
 	cd mpv
-	git checkout -f "$v_mpv"
+	git checkout -f fongmi
 	cd ..
 fi
 echo "[trace] done" >&2
