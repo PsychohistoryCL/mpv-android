@@ -8,11 +8,24 @@ int main(int argc, char **argv) {
     const char *path = argc > 1 ? argv[1] : "/data/local/tmp/libvulkan_freedreno.so";
     void *lib = dlopen(path, RTLD_NOW | RTLD_LOCAL);
     if (!lib) { printf("DLFAIL %s\n", dlerror()); return 2; }
-    PFN_vkCreateInstance pCreate = (PFN_vkCreateInstance)dlsym(lib, "vkCreateInstance");
-    PFN_vkEnumeratePhysicalDevices pEnum = (PFN_vkEnumeratePhysicalDevices)dlsym(lib, "vkEnumeratePhysicalDevices");
-    PFN_vkGetPhysicalDeviceProperties pProps = (PFN_vkGetPhysicalDeviceProperties)dlsym(lib, "vkGetPhysicalDeviceProperties");
-    PFN_vkDestroyInstance pDestroy = (PFN_vkDestroyInstance)dlsym(lib, "vkDestroyInstance");
-    if (!pCreate || !pEnum || !pProps) { printf("SYMFAIL\n"); return 3; }
+    // Android ICDs export only the loader interface, not vk* directly.
+    typedef void (*PFN_negotiate)(uint32_t *);
+    typedef PFN_vkVoidFunction (*PFN_gipa)(VkInstance, const char *);
+    PFN_negotiate pNeg = (PFN_negotiate)dlsym(lib, "vk_icdNegotiateLoaderICDInterfaceVersion");
+    PFN_gipa pGIPA = (PFN_gipa)dlsym(lib, "vk_icdGetInstanceProcAddr");
+    uint32_t icdVer = 0;
+    if (pNeg) { icdVer = 3; pNeg(&icdVer); printf("ICD version=%u\n", icdVer); }
+    else printf("NO vk_icdNegotiateLoaderICDInterfaceVersion\n");
+    if (!pGIPA) {
+        pGIPA = (PFN_gipa)dlsym(lib, "vkGetInstanceProcAddr");
+        printf("%s\n", pGIPA ? "using vkGetInstanceProcAddr" : "NO GIPA");
+    }
+    if (!pGIPA) { printf("SYMFAIL\n"); return 3; }
+    PFN_vkCreateInstance pCreate = (PFN_vkCreateInstance)pGIPA(NULL, "vkCreateInstance");
+    PFN_vkEnumeratePhysicalDevices pEnum = (PFN_vkEnumeratePhysicalDevices)pGIPA(NULL, "vkEnumeratePhysicalDevices");
+    PFN_vkGetPhysicalDeviceProperties pProps = (PFN_vkGetPhysicalDeviceProperties)pGIPA(NULL, "vkGetPhysicalDeviceProperties");
+    PFN_vkDestroyInstance pDestroy = (PFN_vkDestroyInstance)pGIPA(NULL, "vkDestroyInstance");
+    if (!pCreate || !pEnum || !pProps) { printf("SYMFAIL pCreate=%p pEnum=%p pProps=%p\n", (void*)pCreate, (void*)pEnum, (void*)pProps); return 3; }
     VkApplicationInfo app = { .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO, .apiVersion = VK_API_VERSION_1_1 };
     VkInstanceCreateInfo ci = { .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, .pApplicationInfo = &app };
     VkInstance inst = 0;
