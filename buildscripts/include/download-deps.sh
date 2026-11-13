@@ -18,6 +18,8 @@ gclone() {
 	return 1
 }
 
+srcroot="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
 mkdir -p deps && cd deps
 
 # openssl
@@ -122,18 +124,11 @@ if [ ! -d lua ]; then
 		# lua.org/ftp intermittently resets TLS connections; retry a few times.
 		# We need the official 5.2.4 tarball: the git tree lacks the bionic
 		# defines that scripts/lua.sh relies on (l_seeknum, l_fseek).
-		ok=0
-		for attempt in 1 2 3 4 5; do
-			if $WGET -q "https://www.lua.org/ftp/lua-$v_lua.tar.gz" -O lua-$v_lua.tar.gz; then
-				if echo "$v_lua_sha256  lua-$v_lua.tar.gz" | sha256sum -c - >/dev/null 2>&1; then
-					ok=1; break
-				fi
-			fi
-			echo "lua download failed (attempt $attempt), retrying..." >&2
-			rm -f lua-$v_lua.tar.gz
-			sleep $((attempt * 5))
-		done
-		[ "$ok" = "1" ] || { echo "could not download lua-$v_lua.tar.gz" >&2; exit 1; }
+		# lua.org resets connections from CI IPs, so the tarball is vendored in-tree.
+		# Kept identical to the official release (sha256 below) to preserve the
+		# l_seeknum/l_fseek defines that scripts/lua.sh relies on.
+		cp "$srcroot/vendor/lua-$v_lua.tar.gz" lua-$v_lua.tar.gz
+		echo "$v_lua_sha256  lua-$v_lua.tar.gz" | sha256sum -c - >&2
 	fi
 	echo "Extracting lua-$v_lua.tar.gz"
 	tar -xz -C lua --strip-components=1 -f lua-$v_lua.tar.gz
