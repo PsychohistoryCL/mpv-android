@@ -119,8 +119,21 @@ echo "[trace] lua start" >&2
 if [ ! -d lua ]; then
 	mkdir lua
 	if [ ! -f lua-$v_lua.tar.gz ]; then
-		# lua.org/ftp rejects modern TLS clients; use the GitHub mirror instead
-		$WGET -q --show-progress "https://codeload.github.com/lua/lua/tar.gz/refs/tags/v$v_lua" -O lua-$v_lua.tar.gz
+		# lua.org/ftp intermittently resets TLS connections; retry a few times.
+		# We need the official 5.2.4 tarball: the git tree lacks the bionic
+		# defines that scripts/lua.sh relies on (l_seeknum, l_fseek).
+		ok=0
+		for attempt in 1 2 3 4 5; do
+			if $WGET -q "https://www.lua.org/ftp/lua-$v_lua.tar.gz" -O lua-$v_lua.tar.gz; then
+				if echo "$v_lua_sha256  lua-$v_lua.tar.gz" | sha256sum -c - >/dev/null 2>&1; then
+					ok=1; break
+				fi
+			fi
+			echo "lua download failed (attempt $attempt), retrying..." >&2
+			rm -f lua-$v_lua.tar.gz
+			sleep $((attempt * 5))
+		done
+		[ "$ok" = "1" ] || { echo "could not download lua-$v_lua.tar.gz" >&2; exit 1; }
 	fi
 	echo "Extracting lua-$v_lua.tar.gz"
 	tar -xz -C lua --strip-components=1 -f lua-$v_lua.tar.gz
