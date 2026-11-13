@@ -4,6 +4,7 @@
 #include <time.h>
 #include <locale.h>
 #include <atomic>
+#include <string>
 
 #include <mpv/client.h>
 
@@ -16,6 +17,9 @@ extern "C" {
 #include "log.h"
 #include "jni_utils.h"
 #include "event.h"
+
+// Turnip via libadrenotools (best-effort, never fatal)
+#include "adrenotools/include/adrenotools/driver.h"
 
 #define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
 
@@ -52,11 +56,49 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
     init_methods_cache(env);
 }
 
+// Try to redirect Vulkan to bundled Turnip driver. Best-effort:
+// any failure falls back to the system driver.
+static void try_init_turnip(JNIEnv *env, jobject appctx) {
+    jclass ctxCls = env->GetObjectClass(appctx);
+    jmethodID getFilesDir = env->GetMethodID(ctxCls, "getFilesDir", "()Ljava/io/File;");
+    jmethodID getAppInfo = env->GetMethodID(ctxCls, "getApplicationInfo", "()Landroid/content/pm/ApplicationInfo;");
+    if (!getFilesDir || !getAppInfo) return;
+    jobject filesDir = env->CallObjectMethod(appctx, getFilesDir);
+    jobject appInfo = env->CallObjectMethod(appctx, getAppInfo);
+    if (!filesDir || !appInfo) return;
+    jclass fileCls = env->GetObjectClass(filesDir);
+    jmethodID getPath = env->GetMethodID(fileCls, "getAbsolutePath", "()Ljava/lang/String;");
+    jclass appInfoCls = env->GetObjectClass(appInfo);
+    jfieldID libDirField = env->GetFieldID(appInfoCls, "nativeLibraryDir", "Ljava/lang/String;");
+    if (!getPath || !libDirField) return;
+    jstring filesPathJ = (jstring)env->CallObjectMethod(filesDir, getPath);
+    jstring libDirJ = (jstring)env->GetObjectField(appInfo, libDirField);
+    if (!filesPathJ || !libDirJ) return;
+    const char *filesPath = env->GetStringUTFChars(filesPathJ, nullptr);
+    const char *libDir = env->GetStringUTFChars(libDirJ, nullptr);
+    if (!filesPath || !libDir) return;
+    std::string drvDir = std::string(filesPath) + "/turnip/";
+    std::string tmpDir = drvDir + "tmp";
+    ALOGV("turnip: trying driver in %s (hooks %s)", drvDir.c_str(), libDir);
+    void *h = adrenotools_open_libvulkan(RTLD_NOW | RTLD_LOCAL,
+                                         ADRENOTOOLS_DRIVER_CUSTOM,
+                                         tmpDir.c_str(), libDir,
+                                         drvDir.c_str(),
+                                         "libvulkan_freedreno.so",
+                                         nullptr, nullptr);
+    if (h) ALOGV("turnip: adrenotools hook installed");
+    else ALOGV("turnip: hook not installed, using system driver");
+    env->ReleaseStringUTFChars(filesPathJ, filesPath);
+    env->ReleaseStringUTFChars(libDirJ, libDir);
+}
+
 jni_func(void, create, jobject appctx) {
     if (g_mpv)
         die("mpv is already initialized");
 
     prepare_environment(env, appctx);
+
+    try_init_turnip(env, appctx);
 
     g_mpv = mpv_create();
     if (!g_mpv)

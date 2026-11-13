@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "name": "Mesa Turnip v27.0.0-20261113-r2-710-720-Test",
+  "description": "EXPERIMENTAL \u2014 Adreno 710, 720, and 722 on Mesa main (710/720 upstream, A722 with hardware-captured registers) plus the UBWC gralloc fix. Unverified on real hardware \u2014 use sysmem mode. All other GPUs unaffected.",
+  "author": "The412Banner",
+  "packageVersion": "2",
+  "vendor": "Mesa",
+  "driverVersion": "Vulkan 1.4.368",
+  "minApi": 28,
+  "libraryName": "libvulkan_freedreno.so"
+}

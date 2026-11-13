@@ -67,6 +67,27 @@ include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE := adrenotools
+LOCAL_CFLAGS := -Wall -Wextra -D__ANDROID_API__=24
+LOCAL_CPPFLAGS += -std=c++17
+LOCAL_C_INCLUDES := \
+    $(LOCAL_PATH)/adrenotools/include \
+    $(LOCAL_PATH)/adrenotools \
+    $(LOCAL_PATH)/adrenotools/lib/linkernsbypass
+LOCAL_SRC_FILES := \
+    adrenotools/src/driver.cpp \
+    adrenotools/src/bcenabler.cpp \
+    adrenotools/src/hook/hook_impl.cpp \
+    adrenotools/src/hook/main_hook.c \
+    adrenotools/src/hook/file_redirect_hook.c \
+    adrenotools/src/hook/gsl_alloc_hook.c \
+    adrenotools/lib/linkernsbypass/android_linker_ns.cpp \
+    adrenotools/lib/linkernsbypass/elf_soname_patcher.cpp
+LOCAL_LDLIBS := -llog -landroid
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+
 LOCAL_MODULE    := libplayer
 LOCAL_CFLAGS    := -Werror
 LOCAL_CPPFLAGS  += -std=c++11
@@ -78,7 +99,8 @@ LOCAL_SRC_FILES := \
 	property.cpp \
 	event.cpp \
 	thumbnail.cpp
-LOCAL_LDLIBS    := -llog -latomic
+LOCAL_LDLIBS    := -llog -latomic -landroid
+LOCAL_STATIC_LIBRARIES := adrenotools
 LOCAL_SHARED_LIBRARIES := swscale avcodec mpv
 
 include $(BUILD_SHARED_LIBRARY)
