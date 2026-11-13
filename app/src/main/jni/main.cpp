@@ -106,8 +106,6 @@ jni_func(void, create, jobject appctx) {
 
     prepare_environment(env, appctx);
 
-    try_init_turnip(env, appctx);
-
     g_mpv = mpv_create();
     if (!g_mpv)
         die("context init failed");
