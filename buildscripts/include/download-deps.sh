@@ -135,7 +135,15 @@ if [ ! -d lua ]; then
 fi
 
 echo "[trace] shaderc start" >&2
-# shaderc
+# google-shaderc (built by scripts/shaderc.sh with ndk-build).
+# git-sync-deps must run inside google-shaderc so it writes google-shaderc/shaderc,
+# not deps/shaderc (which is the NDK stub created below).
+if [ ! -d google-shaderc ]; then
+	gclone google-shaderc https://github.com/google/shaderc google-shaderc
+	( cd google-shaderc && ./utils/git-sync-deps )
+fi
+
+# shaderc stub: libplacebo looks for the NDK's shaderc sources here
 mkdir -p shaderc
 cat >shaderc/README <<'HEREDOC'
 shaderc sources are provided by the NDK
