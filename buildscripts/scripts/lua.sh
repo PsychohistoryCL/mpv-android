@@ -12,7 +12,8 @@ else
 fi
 
 # Building separately from source tree is not supported, this means we are forced to always clean
-$0 clean
+# (tolerate failure: the git-checkout Makefile calls the legacy `rcsclean` tool)
+make clean || true
 
 mycflags=(
 	# ensures correct linking into libmpv.so
