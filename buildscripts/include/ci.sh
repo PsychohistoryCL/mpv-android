@@ -62,17 +62,25 @@ elif [ "$1" = "install" ]; then
 	msg "Fetching SDK + NDK"
 	IN_CI=1 ./include/download-sdk.sh
 
-	msg "Fetching mpv ($v_mpv)"
+	msg "Fetching mpv (FongMi/mpv fongmi)"
+	rm -rf deps/mpv
 	mkdir -p deps/mpv
-	if [ ! -f deps/mpv/Cargo.toml ] && [ ! -f deps/mpv/meson.build ]; then
-		$WGET -q --show-progress "https://github.com/mpv-player/mpv/archive/${v_mpv}.tar.gz" -O mpv-pin.tgz
-		tar -xzf mpv-pin.tgz -C deps/mpv --strip-components=1
-		rm mpv-pin.tgz
-	fi
+	$WGET -q --show-progress "https://github.com/FongMi/mpv/archive/refs/heads/fongmi.tar.gz" -O mpv-pin.tgz
+	tar -xzf mpv-pin.tgz -C deps/mpv --strip-components=1
+	rm mpv-pin.tgz
 
 	msg "Trying to fetch existing prefix"
 	mkdir -p prefix
-	fetch_prefix || build_prefix
+	if fetch_prefix; then
+		msg "Overlaying FongMi/libplacebo (fongmi) onto cached prefix"
+		rm -rf deps/libplacebo
+		git clone --depth 1 --recursive --branch fongmi https://github.com/FongMi/libplacebo deps/libplacebo
+		for arch in $v_ci_archs; do
+			./buildall.sh --arch "$arch" libplacebo
+		done
+	else
+		build_prefix
+	fi
 	exit 0
 elif [ "$1" = "build" ]; then
 	# run build
