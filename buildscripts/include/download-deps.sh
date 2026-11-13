@@ -42,12 +42,12 @@ fi
 if [ ! -d ffmpeg ]; then
 	args=()
 	[ $IN_CI -eq 1 ] && args+=(--depth=1 -b "$v_ci_ffmpeg")
-	gclone ffmpeg https://github.com/FFmpeg/FFmpeg "${args[@]}"
+	gclone ffmpeg https://github.com/FFmpeg/FFmpeg ffmpeg "${args[@]}"
 fi
 
 # freetype2
 if [ ! -d freetype2 ]; then
-	gclone freetype2 --recurse-submodules https://gitlab.freedesktop.org/freetype/freetype.git -b VER-${v_freetype//./-}
+	gclone freetype2 --recurse-submodules https://gitlab.freedesktop.org/freetype/freetype.git freetype2 -b VER-${v_freetype//./-}
 else
 	cd freetype2
 	echo "Updating freetype2"
