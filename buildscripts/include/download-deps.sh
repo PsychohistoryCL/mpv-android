@@ -21,7 +21,9 @@ else
 fi
 
 # dav1d
-[ ! -d dav1d ] && git clone https://github.com/videolan/dav1d
+if [ ! -d dav1d ]; then
+	git clone https://github.com/videolan/dav1d
+fi
 
 # ffmpeg
 if [ ! -d ffmpeg ]; then
@@ -94,7 +96,9 @@ if [ ! -d fontconfig ]; then
 fi
 
 # libass
-[ ! -d libass ] && git clone https://github.com/libass/libass
+if [ ! -d libass ]; then
+	git clone https://github.com/libass/libass
+fi
 
 # lua
 if [ ! -d lua ]; then
@@ -122,7 +126,9 @@ if [ ! -d google-shaderc ]; then
 fi
 
 # libplacebo
-[ ! -d libplacebo ] && git clone --recursive https://github.com/haasn/libplacebo
+if [ ! -d libplacebo ]; then
+	git clone --recursive https://github.com/haasn/libplacebo
+fi
 
 # curl
 if [ ! -d curl ]; then
@@ -135,5 +141,7 @@ if [ ! -d curl ]; then
 fi
 
 # mpv
-[ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
+if [ ! -d mpv ]; then
+	git clone https://github.com/mpv-player/mpv
+fi
 
