@@ -74,9 +74,10 @@ elif [ "$1" = "install" ]; then
 	if fetch_prefix; then
 		msg "Overlaying FongMi/libplacebo (fongmi) onto cached prefix"
 		rm -rf deps/libplacebo
+		mkdir -p deps/shaderc
 		git clone --depth 1 --recursive --branch fongmi https://github.com/FongMi/libplacebo deps/libplacebo
 		for arch in $v_ci_archs; do
-			./buildall.sh --arch "$arch" libplacebo
+			./buildall.sh --no-deps --arch "$arch" libplacebo
 		done
 	else
 		build_prefix
