@@ -130,14 +130,6 @@ shaderc sources are provided by the NDK
 see <ndk>/sources/third_party/shaderc
 HEREDOC
 
-# google-shaderc
-if [ ! -d google-shaderc ]; then
-	gclone google-shaderc --recursive https://github.com/google/shaderc
-	cd google-shaderc/utils
-	./git-sync-deps
-	cd ../..
-fi
-
 # libplacebo
 if [ ! -d libplacebo ]; then
 	gclone libplacebo --recursive https://github.com/haasn/libplacebo
