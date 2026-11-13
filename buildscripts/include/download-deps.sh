@@ -163,11 +163,11 @@ if [ ! -d lcms2 ]; then
 fi
 
 echo "[trace] libplacebo start" >&2
-# libplacebo
+# libplacebo (FongMi fork with Vulkan YCbCr AHardwareBuffer wrapping)
 if [ ! -d libplacebo ]; then
-	gclone libplacebo --recursive https://github.com/haasn/libplacebo
+	gclone libplacebo --recursive https://github.com/FongMi/libplacebo
 	cd libplacebo
-	git checkout -f "$v_libplacebo"
+	git checkout -f master
 	git submodule update --init --recursive
 	cd ..
 fi
