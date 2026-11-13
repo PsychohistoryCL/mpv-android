@@ -65,6 +65,7 @@ LOCAL_SRC_FILES := $(PREFIX)/lib/libmpv.so
 LOCAL_EXPORT_C_INCLUDES := $(PREFIX)/include
 include $(PREBUILT_SHARED_LIBRARY)
 
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := adrenotools
@@ -86,6 +87,7 @@ LOCAL_SRC_FILES := \
     adrenotools/lib/linkernsbypass/elf_soname_patcher.cpp
 LOCAL_LDLIBS := -llog -landroid
 include $(BUILD_STATIC_LIBRARY)
+endif
 
 include $(CLEAR_VARS)
 
@@ -101,7 +103,9 @@ LOCAL_SRC_FILES := \
 	event.cpp \
 	thumbnail.cpp
 LOCAL_LDLIBS    := -llog -latomic -landroid
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
 LOCAL_STATIC_LIBRARIES := adrenotools
+endif
 LOCAL_SHARED_LIBRARIES := swscale avcodec mpv
 
 include $(BUILD_SHARED_LIBRARY)

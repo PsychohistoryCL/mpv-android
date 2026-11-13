@@ -19,8 +19,10 @@ extern "C" {
 #include "jni_utils.h"
 #include "event.h"
 
+#if defined(__aarch64__)
 // Turnip via libadrenotools (best-effort, never fatal)
 #include "adrenotools/include/adrenotools/driver.h"
+#endif
 
 #define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
 
@@ -60,6 +62,10 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
 // Try to redirect Vulkan to bundled Turnip driver. Best-effort:
 // any failure falls back to the system driver.
 static void try_init_turnip(JNIEnv *env, jobject appctx) {
+#if !defined(__aarch64__)
+    (void)env; (void)appctx;
+    return;
+#else
     jclass ctxCls = env->GetObjectClass(appctx);
     jmethodID getFilesDir = env->GetMethodID(ctxCls, "getFilesDir", "()Ljava/io/File;");
     jmethodID getAppInfo = env->GetMethodID(ctxCls, "getApplicationInfo", "()Landroid/content/pm/ApplicationInfo;");
@@ -91,6 +97,7 @@ static void try_init_turnip(JNIEnv *env, jobject appctx) {
     else ALOGV("turnip: hook not installed, using system driver");
     env->ReleaseStringUTFChars(filesPathJ, filesPath);
     env->ReleaseStringUTFChars(libDirJ, libDir);
+#endif
 }
 
 jni_func(void, create, jobject appctx) {
