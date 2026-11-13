@@ -68,6 +68,7 @@ elif [ "$1" = "install" ]; then
 	$WGET -q --show-progress "https://github.com/FongMi/mpv/archive/refs/heads/fongmi.tar.gz" -O mpv-pin.tgz
 	tar -xzf mpv-pin.tgz -C deps/mpv --strip-components=1
 	rm mpv-pin.tgz
+	find deps/mpv/video -name '*.c' -exec sed -i 's/av_mediacodec_release_buffer_status/av_mediacodec_release_buffer/g' {} +
 
 	msg "Trying to fetch existing prefix"
 	mkdir -p prefix
