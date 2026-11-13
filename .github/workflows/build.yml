@@ -49,6 +49,12 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
+          name: turnip-probe-arm64
+          path: turnip-test/test_turnip
+          archive: false
+
+      - uses: actions/upload-artifact@v7
+        with:
           name: mpv-android-arm64-v8a
           path: app/build/outputs/apk/default/debug/app-default-arm64-v8a-debug.apk
           archive: true
