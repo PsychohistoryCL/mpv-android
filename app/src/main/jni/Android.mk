@@ -103,9 +103,6 @@ LOCAL_SRC_FILES := \
 	event.cpp \
 	thumbnail.cpp
 LOCAL_LDLIBS    := -llog -latomic -landroid
-ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
-LOCAL_STATIC_LIBRARIES := adrenotools
-endif
 LOCAL_SHARED_LIBRARIES := swscale avcodec mpv
 
 include $(BUILD_SHARED_LIBRARY)
